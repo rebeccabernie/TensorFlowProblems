@@ -29,10 +29,13 @@ One Hot Encoding is a method of transforming a classification or type based data
 ### 4. Test the model.  
  *Use the testing set to test your model, clearly calculating and displaying the error rate.*  
  Firstly, the program will make a species prediction for each element in the test set, outputting any incorrect predictions with the corresponding actual species.  
- The program then uses Keras' `model.evaluate()` function to calculate the loss and accuracy values. The function returns the results in an array of length 2, with the loss result stored in position `0`, and the accuracy stored in position `1` as a float between 0 and 1. This float is multiplied by 100 to get the percentage, and the error rate is calculated by taking this new percentage from 100. The program then outputs the loss, accuracy, and error rates.  
+ The program then uses Keras' `model.evaluate()` function to calculate the loss and accuracy values. The function returns the results in an array of length 2, with the loss result stored in position `0`, and the accuracy stored in position `1` as a float between 0 and 1. This float is multiplied by 100 to get the percentage, and the error rate is calculated by taking this new percentage from 100. The program then outputs the loss, accuracy, and error rates. From my experience testing the program, the accuracy tends to fall between 94 and 98%.  
  See below for an example output.  
 
  ![results](https://user-images.githubusercontent.com/14957616/33153896-8d446ba0-cfdc-11e7-9579-e3f4de9a4174.JPG "Finished results and percentages")  
 
  #### Known Bugs
-
+In some instances, the program appears to be unable to predict a species and returns `[0, 0, 0]` as a prediction and some runtime errors, pointing to the following line:  
+`prediction = np.around(model.predict(np.expand_dims(test_x[i], axis=0))).astype(np.int)[0]`  
+I suspected the problem was to do with rounding down to 0 instead of 1 and tried wrapping the line in the `math.ceil` function, to force the prediction to round up to 1. This did not work, as the math.ceil function kept producing compile errors regarding rounding an array element. I tried replacing `np.around()[0]` with `math.ceil` and removing the `axis=0` parameter, but this produced compile errors regarding expected array sizes.  
+Failing to fix the issue, I decided the next best option was to simply output "Error" in place of a species when the prediction was [0, 0, 0]. While this didn't fix the error, at least the program now outputs without compile errors.
